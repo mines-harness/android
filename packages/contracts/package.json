@@ -1,0 +1,70 @@
+{
+  "name": "@t3tools/contracts",
+  "version": "0.1.2",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./settings": {
+      "types": "./src/settings.ts",
+      "import": "./src/settings.ts"
+    },
+    "./relay": {
+      "types": "./src/relay.ts",
+      "import": "./src/relay.ts"
+    },
+    "./groupChat": {
+      "types": "./src/groupChat.ts",
+      "import": "./src/groupChat.ts"
+    },
+    "./sharedGroups": {
+      "types": "./src/sharedGroups.ts",
+      "import": "./src/sharedGroups.ts"
+    },
+    "./contacts": {
+      "types": "./src/contacts.ts",
+      "import": "./src/contacts.ts"
+    },
+    "./minesCatalog": {
+      "types": "./src/minesCatalog.ts",
+      "import": "./src/minesCatalog.ts"
+    },
+    "./minesPeer": {
+      "types": "./src/minesPeer.ts",
+      "import": "./src/minesPeer.ts"
+    },
+    "./executionTargets": {
+      "types": "./src/executionTargets.ts",
+      "import": "./src/executionTargets.ts"
+    },
+    "./catalogRpc": {
+      "types": "./src/catalogRpc.ts",
+      "import": "./src/catalogRpc.ts"
+    },
+    "./orchestrationV2": {
+      "types": "./src/orchestrationV2.ts",
+      "import": "./src/orchestrationV2.ts"
+    },
+    "./minesDevicePairing": {
+      "types": "./src/minesDevicePairing.ts",
+      "import": "./src/minesDevicePairing.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vp test run --config ../../vite.config.ts --dir ."
+  },
+  "dependencies": {
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

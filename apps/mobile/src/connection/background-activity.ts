@@ -1,0 +1,123 @@
+import { EnvironmentRegistry } from "@t3tools/client-runtime/connection";
+import { EnvironmentRpcSubscriptionObserver, request } from "@t3tools/client-runtime/rpc";
+import {
+  type BackgroundScope,
+  type ClientActivityReportInput,
+  type EnvironmentId,
+  WS_METHODS,
+} from "@t3tools/contracts";
+import * as Clock from "effect/Clock";
+import * as DateTime from "effect/DateTime";
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
+import * as Queue from "effect/Queue";
+import * as Stream from "effect/Stream";
+import * as SubscriptionRef from "effect/SubscriptionRef";
+import { AppState } from "react-native";
+
+import * as MobileStorage from "../persistence/mobile-storage";
+import { mobileActivityHeartbeats } from "./background-activity-heartbeat";
+import {
+  observeMobileBackgroundActivitySubscription,
+  onRetainedMobileBackgroundScopesChange,
+  retainedMobileBackgroundScopes,
+} from "./background-activity-scopes";
+
+const LEASE_TTL_MS = 45_000;
+const BASELINE_SCOPES: ReadonlyArray<BackgroundScope> = [{ type: "provider-status" }];
+
+function normalizeAppState(
+  state: string | null | undefined,
+): NonNullable<ClientActivityReportInput["appState"]> {
+  if (state === "active" || state === "inactive" || state === "background") return state;
+  return "unknown";
+}
+
+export const layerObserver = Layer.succeed(
+  EnvironmentRpcSubscriptionObserver,
+  EnvironmentRpcSubscriptionObserver.of({
+    observe: observeMobileBackgroundActivitySubscription,
+  }),
+);
+
+export const layerReporter = Layer.effectDiscard(
+  Effect.gen(function* () {
+    const registry = yield* EnvironmentRegistry.EnvironmentRegistry;
+    const storage = yield* MobileStorage.MobileStorage;
+    const clientId = yield* storage.loadOrCreateAgentAwarenessDeviceId.pipe(
+      Effect.map((deviceId) => `mobile-${deviceId}`),
+      Effect.orElseSucceed(() => "ephemeral-mobile-client"),
+    );
+    const reportRequests = yield* Queue.sliding<void>(1);
+    const requestReport = () => Queue.offerUnsafe(reportRequests, undefined);
+    let appState = AppState.currentState ?? null;
+    const appStateChanges = yield* Queue.sliding<string | null>(1);
+    yield* Queue.offer(appStateChanges, appState);
+    const requestForegroundReport = () => {
+      if (appState === "active") requestReport();
+    };
+
+    const report = Effect.gen(function* () {
+      const observedAtMs = yield* Clock.currentTimeMillis;
+      const active = appState === "active";
+      const entries = yield* SubscriptionRef.get(registry.entries);
+      yield* Effect.forEach(
+        entries.keys(),
+        (environmentId) =>
+          registry
+            .run(
+              environmentId,
+              request(WS_METHODS.serverReportClientActivity, {
+                environmentId: environmentId as EnvironmentId,
+                clientId,
+                clientKind: "mobile",
+                visible: active,
+                focused: active,
+                recentlyInteracted: active,
+                appState: normalizeAppState(appState),
+                scopes: [
+                  ...BASELINE_SCOPES,
+                  ...retainedMobileBackgroundScopes(environmentId as EnvironmentId),
+                ],
+                ttlMs: LEASE_TTL_MS,
+                observedAt: DateTime.makeUnsafe(observedAtMs),
+              }),
+            )
+            // Not `ignore`: tearing down an environment mid-request interrupts its report,
+            // and an interrupt leaking out here would end the reporting loop for good.
+            .pipe(Effect.ignoreCause),
+        { concurrency: "unbounded", discard: true },
+      );
+    }).pipe(Effect.withSpan("mobile.backgroundActivity.report"));
+
+    yield* Effect.acquireRelease(
+      Effect.sync(() => {
+        const removeScopeListener = onRetainedMobileBackgroundScopesChange(requestForegroundReport);
+        const subscription = AppState.addEventListener("change", (nextState) => {
+          appState = nextState;
+          Queue.offerUnsafe(appStateChanges, nextState);
+          requestReport();
+        });
+        return { removeScopeListener, subscription };
+      }),
+      ({ removeScopeListener, subscription }) =>
+        Effect.sync(() => {
+          removeScopeListener();
+          subscription.remove();
+        }),
+    );
+    yield* SubscriptionRef.changes(registry.entries).pipe(
+      Stream.runForEach(() => Effect.sync(requestForegroundReport)),
+      Effect.forkScoped,
+    );
+    yield* Stream.fromQueue(reportRequests).pipe(
+      Stream.debounce("250 millis"),
+      Stream.runForEach(() => report),
+      Effect.forkScoped,
+    );
+    yield* mobileActivityHeartbeats(Stream.fromQueue(appStateChanges)).pipe(
+      Stream.runForEach(() => Effect.sync(requestForegroundReport)),
+      Effect.forkScoped,
+    );
+  }),
+);

@@ -1,0 +1,33 @@
+{
+  "verification": "real isolated Mines host protocol",
+  "status": "passed",
+  "startedAt": "2026-10-26T10:12:07.077Z",
+  "completedSteps": [
+    "real environment authentication",
+    "provider-free host configuration",
+    "actual project record",
+    "real shell and thread metadata delta",
+    "stable command id replay",
+    "disconnected committed delta replayed from cursor"
+  ],
+  "limitations": [
+    "No provider was started and no user or assistant message was injected.",
+    "This verifies host auth, idle records, deltas, command replay and cursor resume; not actual agent replies, approvals or model attachment consumption.",
+    "Native app/device behavior must be verified separately by the primary agent."
+  ],
+  "origin": "http://127.0.0.1:19473",
+  "providerCount": 0,
+  "enabledProviderCount": 0,
+  "environmentId": "4e1cfa1c-8672-4a97-aaa3-c63860bab499",
+  "serverVersion": "0.1.15",
+  "projectId": "fce0591e-244d-46c1-91f2-c83d2c998f5c",
+  "projectCreatedByThisRun": false,
+  "threadId": "630c3db6-e4b6-438a-8304-27f71eb5f5dd",
+  "createdSequence": 2,
+  "liveSequence": 3,
+  "commandReplaySequence": 3,
+  "resumedFromSequence": 3,
+  "replayedSequence": 4,
+  "finalTitle": "Real host verification resumed 630c3db6",
+  "finishedAt": "2026-10-26T10:12:07.276Z"
+}
