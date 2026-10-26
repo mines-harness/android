@@ -1,0 +1,36 @@
+{
+  "releaseUrl": "https://github.com/mines-harness/android/releases/tag/v0.1.0-preview.1",
+  "tag": "v0.1.0-preview.1",
+  "privateRepository": true,
+  "prerelease": true,
+  "sourceCommit": "5cbf96e79c672985215bc5eedebeadaf282256cb",
+  "apk": {
+    "name": "mines-android-0.1.0-preview.1-test-signed.apk",
+    "bytes": 196735927,
+    "sha256": "4f141ebcb9fabd634d6264d19b07d7862af828489b332888a63e06c8bae06882",
+    "githubAssetId": 677998869,
+    "downloadUrl": "https://github.com/mines-harness/android/releases/download/v0.1.0-preview.1/mines-android-0.1.0-preview.1-test-signed.apk"
+  },
+  "checks": {
+    "githubPublished": true,
+    "fullAssetDownloaded": true,
+    "downloadedChecksumMatchesLocalBuild": true,
+    "downloadedChecksumFileMatches": true,
+    "apkSignatureVerified": true,
+    "signature": "Android Debug, test only",
+    "androidInstalledAndLaunched": "API 36 isolated emulator, standalone Release",
+    "iosFinalBuiltInstalledAndLaunched": "ARM64 iOS 27 isolated simulator, ad hoc local signature"
+  },
+  "notValidated": [
+    "authenticated account and manually approved peer end-to-end",
+    "real AI provider stream or tool approval",
+    "physical devices",
+    "APNs/FCM"
+  ],
+  "requires": [
+    "same Mines account on phone and host",
+    "human device approval",
+    "compatible direct WebRTC network"
+  ],
+  "temporaryTestState": "isolated CLI state and private pairing files removed; no user host or VPS modified"
+}

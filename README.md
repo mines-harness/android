@@ -8,11 +8,11 @@ Les dépôts privés [Android](https://github.com/mines-harness/android) et [iOS
 
 ## Installer l’APK de test
 
-Publication prévue : [v0.1.0-preview.1](https://github.com/mines-harness/android/releases/tag/v0.1.0-preview.1). **Ce lien est une cible de publication, pas la preuve qu’un APK soit disponible.** La livraison ne sera confirmée qu’après vérification de l’asset et de son checksum.
+Release privée publiée : [v0.1.0-preview.1](https://github.com/mines-harness/android/releases/tag/v0.1.0-preview.1). L’APK distribué a été retéléchargé depuis GitHub : SHA-256 et signature Android Debug vérifiés. Voir le [reçu de livraison](docs/validation/android-release.json).
 
 L’APK est **Mines Preview**, identifiant `app.mines.mobile.preview`, signé pour les essais. Il ne s’agit pas d’une signature de production. Il embarque son JavaScript ; son lancement autonome sans Metro ni Expo Go a été vérifié sur émulateur Android API 36. Aucun envoi vers Play Store ou App Store n’est prévu.
 
-Après publication :
+Installation :
 
 1. Télécharger l’APK et le fichier de sommes SHA-256 depuis la même release privée, avec un compte GitHub autorisé.
 2. Vérifier le checksum : `shasum -a 256 -c SHA256SUMS` depuis le dossier contenant les fichiers.
