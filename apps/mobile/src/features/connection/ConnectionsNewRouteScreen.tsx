@@ -112,26 +112,23 @@ export function ConnectionsNewRouteScreen(
           {pairingInput.kind === "peer" ? (
             <>
               <PeerPairingSection
-                key={pairingInput.kind === "peer" ? pairingInput.pairingUrl : "peer"}
-                scannedCode={pairingInput.kind === "peer" ? pairingInput.pairingUrl : ""}
+                key={pairingInput.pairingUrl}
+                scannedCode={pairingInput.pairingUrl}
               />
               <DirectPairingSection
-                key={pairingInput.kind === "direct" ? pairingInput.pairingUrl : "direct"}
-                initialPairingUrl={pairingInput.kind === "direct" ? pairingInput.pairingUrl : ""}
+                key="direct"
+                initialPairingUrl=""
                 expectedEnvironmentId={props.route.params?.routeFor}
               />
             </>
           ) : (
             <>
               <DirectPairingSection
-                key={pairingInput.kind === "direct" ? pairingInput.pairingUrl : "direct"}
-                initialPairingUrl={pairingInput.kind === "direct" ? pairingInput.pairingUrl : ""}
+                key={pairingInput.pairingUrl}
+                initialPairingUrl={pairingInput.pairingUrl}
                 expectedEnvironmentId={props.route.params?.routeFor}
               />
-              <PeerPairingSection
-                key={pairingInput.kind === "peer" ? pairingInput.pairingUrl : "peer"}
-                scannedCode={pairingInput.kind === "peer" ? pairingInput.pairingUrl : ""}
-              />
+              <PeerPairingSection key="peer" scannedCode="" />
             </>
           )}
           <PairingScanCard

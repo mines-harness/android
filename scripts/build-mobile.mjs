@@ -77,9 +77,14 @@ if (platform === "android") {
   const lock = NodePath.resolve(root, "native-locks/Podfile.lock");
   if (NodeFS.existsSync(lock)) NodeFS.copyFileSync(lock, NodePath.resolve(native, "Podfile.lock"));
   const podEnv = { ...env, DEVELOPER_DIR: developerDir };
-  delete podEnv.GEM_HOME;
-  delete podEnv.GEM_PATH;
-  const pod = NodeChildProcess.spawnSync("pod", ["install"], {
+  const podCommand =
+    process.env.MINES_COCOAPODS_BIN ??
+    (NodeFS.existsSync("/opt/homebrew/bin/pod") ? "/opt/homebrew/bin/pod" : "pod");
+  if (podCommand.startsWith("/opt/homebrew/")) {
+    delete podEnv.GEM_HOME;
+    delete podEnv.GEM_PATH;
+  }
+  const pod = NodeChildProcess.spawnSync(podCommand, ["install"], {
     cwd: native,
     env: podEnv,
     stdio: "inherit",
