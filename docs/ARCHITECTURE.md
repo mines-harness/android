@@ -21,7 +21,7 @@ L’exécutable CLI expose seulement une partie du runtime : projets, conversati
 
 Le compte Mines utilise le service d’identité configuré et `/api/auth/*`. Un token compte ne constitue pas à lui seul un droit d’agir sur un hôte. Chaque environnement conserve ses autorisations et l’identité de destination est vérifiée à la connexion.
 
-Le parcours direct échange un lien à usage unique via `/oauth/token`, puis utilise une session bearer/DPoP et des tickets WebSocket courts. Le parcours peer emploie une identité d’appareil et une session WebRTC directe avec les mêmes contrats RPC. Un appareil doit être approuvé ; aucune approbation n’est déduite d’un QR ou exécutée en arrière-plan.
+Le parcours pris en charge sur mobile utilise un compte Mines, une identité d’appareil approuvée et une session WebRTC directe avec les contrats RPC existants. Le resolver exige un `peerDeviceId` pour les profils bearer ; un lien historique à jeton seul ne rend pas un hôte utilisable, y compris sur loopback. L’interface refuse cette voie avant échange de credential. Un appareil doit être approuvé par une personne ; aucune approbation n’est déduite d’un QR ou exécutée en arrière-plan. La politique de confiance partagée n’a pas été assouplie.
 
 L’origine d’un QR peer doit correspondre à l’origine HTTPS du service de compte configuré avant de charger ou transmettre le token compte. Comptes, hôtes et routes ne sont pas interchangeables.
 
@@ -31,9 +31,7 @@ Le CLI privé inspecté ne possède pas `peer.pairingRequests`, `peer.approvePai
 
 ## Bibliothèque locale et bibliothèque de compte
 
-Sans compte, les hôtes explicitement appairés par bearer alimentent le catalogue local au téléphone. Les routes apprises, peer ou autorisées par un compte ne sont pas assimilées à des hôtes manuels. Avec un compte connecté, la bibliothèque affiche ses environnements ; les hôtes locaux ne sont pas importés dans sa réplique.
-
-Le catalogue local organise projets, sections et épinglés mais ne réplique pas le contexte hérité vers l’hôte. La capture de contexte d’exécution utilise alors le contexte faisant autorité sur l’hôte. Le composer peut transmettre son contexte explicite et ses pièces jointes. L’application ne prétend donc pas qu’un contexte local non synchronisé a été reçu par l’agent.
+Le téléphone conserve un catalogue local séparé des catalogues de compte. Ce stockage local ne crée aucun droit de connexion à un hôte. Les profils bearer historiques sans peer approuvé ne sont pas une voie de contrôle distant prise en charge. Avec un compte connecté, la bibliothèque affiche les environnements autorisés de ce compte ; les données locales ne sont pas importées automatiquement dans sa réplique.
 
 Le mode compte synchronise le catalogue sur des sessions peer approuvées. Une commande nécessitant un contexte répliqué vérifie l’identité courante et attend la synchronisation ; elle échoue si celle-ci ne peut être établie. Changer de compte n’autorise pas à réutiliser le contexte ou les sessions de l’ancien compte.
 

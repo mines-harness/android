@@ -7,6 +7,7 @@ import type { EnvironmentId } from "@t3tools/contracts";
 import * as Effect from "effect/Effect";
 
 import { connectionAtomRuntime } from "./runtime";
+import { rejectUnapprovedHostPairing } from "./directPairingPolicy";
 
 const onboardingScheduler = createAtomCommandScheduler();
 
@@ -19,13 +20,7 @@ export const connectPairingUrl = createRuntimeCommand(connectionAtomRuntime, {
     key: (input: { readonly pairingUrl: string; readonly expectedEnvironmentId?: EnvironmentId }) =>
       JSON.stringify([input.pairingUrl, input.expectedEnvironmentId ?? null]),
   },
-  execute: (input: {
-    readonly pairingUrl: string;
-    readonly expectedEnvironmentId?: EnvironmentId;
-  }) =>
-    ConnectionOnboarding.ConnectionOnboarding.pipe(
-      Effect.flatMap((onboarding) => onboarding.registerPairing(input)),
-    ),
+  execute: rejectUnapprovedHostPairing,
 });
 
 export const updateBearerConnection = createRuntimeCommand(connectionAtomRuntime, {

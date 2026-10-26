@@ -67,8 +67,8 @@ export function PeerPairingSection({ scannedCode }: { readonly scannedCode: stri
   if (!hasMinesIdentityConfig()) {
     return (
       <Text className="px-4 text-sm text-foreground-muted">
-        Account-based peer pairing requires an account service configured in this build. You can
-        still pair a reachable host using its one-time link above.
+        Remote pairing requires an account service configured in this build and explicit approval of
+        this phone on the host. A one-time host link alone does not provide remote access.
       </Text>
     );
   }

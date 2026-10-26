@@ -29,7 +29,7 @@ function pairingDraft(initial: string): {
   readonly kind: "direct" | "peer";
   readonly pairingUrl: string;
 } {
-  if (!initial) return { kind: "direct", pairingUrl: "" };
+  if (!initial) return { kind: "peer", pairingUrl: "" };
   try {
     const input = readPairingInput(initial, Date.now() / 1000);
     return { kind: input.kind, pairingUrl: input.pairingUrl };
@@ -112,28 +112,13 @@ export function ConnectionsNewRouteScreen(
         contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 4 }}
       >
         <View collapsable={false} className="gap-6.5">
-          {pairingInput.kind === "peer" ? (
-            <>
-              <PeerPairingSection
-                key={pairingInput.pairingUrl}
-                scannedCode={pairingInput.pairingUrl}
-              />
-              <DirectPairingSection
-                key="direct"
-                initialPairingUrl=""
-                expectedEnvironmentId={props.route.params?.routeFor}
-              />
-            </>
-          ) : (
-            <>
-              <DirectPairingSection
-                key={pairingInput.pairingUrl}
-                initialPairingUrl={pairingInput.pairingUrl}
-                expectedEnvironmentId={props.route.params?.routeFor}
-              />
-              <PeerPairingSection key="peer" scannedCode="" />
-            </>
-          )}
+          {pairingInput.kind === "direct" && pairingInput.pairingUrl ? (
+            <DirectPairingSection />
+          ) : null}
+          <PeerPairingSection
+            key={pairingInput.kind === "peer" ? pairingInput.pairingUrl : "peer"}
+            scannedCode={pairingInput.kind === "peer" ? pairingInput.pairingUrl : ""}
+          />
           <PairingScanCard
             cameraActive={cameraPermission?.granted === true && screenFocused && !scanComplete}
             onScan={handleQrScan}

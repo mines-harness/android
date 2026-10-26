@@ -1,8 +1,8 @@
 # Mines Mobile
 
-Client natif iOS et Android pour piloter des agents exécutés sur vos hôtes Mines. Cette première version est une **préversion à valider**, issue du client React Native et des contrats utilisés par Mines desktop. Elle contient les parcours réels de connexion et de contrôle ; aucune donnée de démonstration n’est injectée dans l’application normale.
+Client natif iOS et Android pour piloter des agents exécutés sur vos hôtes Mines. Cette première version est une **préversion technique privée pour essais**, issue du client React Native et des contrats utilisés par Mines desktop. Elle contient les parcours réels de connexion et de contrôle ; aucune donnée de démonstration n’est injectée dans l’application normale.
 
-**État de livraison : compilation native, essais sur hôte et publication APK en attente de validation.** La présence d’un écran ou d’un test unitaire ne certifie pas son fonctionnement sur appareil. Voir la [matrice de parité](docs/PARITY.md) et les [contraintes d’architecture](docs/ARCHITECTURE.md).
+**Validation disponible : builds Android Release et iOS ARM64 réussis, démarrage natif et tests isolés exécutés. Le parcours complet compte + peer approuvé + agent réel reste à valider.** La présence d’un écran ou d’un test unitaire ne certifie pas son fonctionnement sur appareil. Voir la [matrice de parité](docs/PARITY.md) et les [contraintes d’architecture](docs/ARCHITECTURE.md).
 
 Les dépôts privés [Android](https://github.com/mines-harness/android) et [iOS](https://github.com/mines-harness/ios) conservent le même client partagé. Le code dépend d’un hôte desktop ou CLI existant ; ce dépôt ne déploie pas de backend.
 
@@ -10,28 +10,18 @@ Les dépôts privés [Android](https://github.com/mines-harness/android) et [iOS
 
 Publication prévue : [v0.1.0-preview.1](https://github.com/mines-harness/android/releases/tag/v0.1.0-preview.1). **Ce lien est une cible de publication, pas la preuve qu’un APK soit disponible.** La livraison ne sera confirmée qu’après vérification de l’asset et de son checksum.
 
-L’APK prévu est **Mines Preview**, identifiant `app.mines.mobile.preview`, signé pour les essais. Il ne s’agit pas d’une signature de production. Il doit embarquer son JavaScript et fonctionner sans Metro ni Expo Go. Aucun envoi vers Play Store ou App Store n’est prévu.
+L’APK est **Mines Preview**, identifiant `app.mines.mobile.preview`, signé pour les essais. Il ne s’agit pas d’une signature de production. Il embarque son JavaScript ; son lancement autonome sans Metro ni Expo Go a été vérifié sur émulateur Android API 36. Aucun envoi vers Play Store ou App Store n’est prévu.
 
 Après publication :
 
 1. Télécharger l’APK et le fichier de sommes SHA-256 depuis la même release privée, avec un compte GitHub autorisé.
 2. Vérifier le checksum : `shasum -a 256 -c SHA256SUMS` depuis le dossier contenant les fichiers.
 3. Autoriser ponctuellement l’installation depuis la source de téléchargement dans Android, puis ouvrir l’APK. Avec un appareil de test déjà configuré pour ADB, `adb install -r chemin/vers/mines-preview.apk` convient également.
-4. Ouvrir **Settings → Environments → +** pour appairer un hôte joignable.
+4. Se connecter à son compte Mines, puis ouvrir **Settings → Environments → +** et suivre le parcours peer approuvé décrit ci-dessous.
 
 La configuration native demande Android 7 / API 24 minimum ; la compatibilité effective des modules et appareils reste à confirmer par les essais. La validation iOS passe par une compilation de simulateur. Une distribution sur iPhone physique exige une signature Apple appropriée, qui n’est pas fournie ici.
 
 ## Connecter un hôte
-
-### Hôte direct, sans compte Mines
-
-Sur l’ordinateur, laisser fonctionner Mines desktop ou un hôte issu du [CLI Mines](https://github.com/mines-harness/cli). Le téléphone doit pouvoir joindre son adresse via un réseau local de confiance, un VPN ou un réseau privé déjà configuré. `localhost` sur le téléphone ne désigne pas l’ordinateur.
-
-Créer un lien d’appairage à usage unique depuis l’hôte. Le CLI propose `mines auth pairing create` ; utiliser une version correspondant à l’hôte et consulter `mines auth pairing create --help` si plusieurs états ou adresses sont disponibles. Le client ne configure ni routeur, ouverture de port, service VPN, ni VPS.
-
-Dans **Settings → Environments → +**, scanner le QR ou coller le lien complet dans **Pair a reachable host**, vérifier l’origine affichée puis choisir **Pair host**. Le lien est sensible : ne pas le publier, le journaliser ou le réutiliser après consommation. Avec HTTP, utiliser uniquement un réseau de confiance ou un transport privé chiffré déjà établi.
-
-Les hôtes ainsi appairés alimentent la bibliothèque locale lorsque le compte Mines est déconnecté. Sections et épinglés locaux ne sont pas transférés dans un compte. Le contexte hérité d’une section locale n’est pas répliqué sur l’hôte ; les messages utilisent le contexte déjà présent sur l’hôte et peuvent inclure leurs propres pièces jointes/contexte explicite.
 
 ### Compte Mines et appareils approuvés
 
@@ -39,7 +29,9 @@ La configuration publique fournie utilise `https://mines.gemstud.io`, origine d�
 
 Se connecter au même compte sur le téléphone et sur l’hôte, puis suivre le parcours **Mines peer** de l’écran d’appairage. L’approbation d’un appareil reste une action humaine. Un QR visant une autre origine que le service de compte configuré est refusé avant lecture ou envoi du token compte. La connexion WebRTC directe dépend du réseau ; aucun relais de secours n’est inventé.
 
-La bibliothèque du compte et la bibliothèque locale restent séparées. Pour utiliser un hôte appairé uniquement par lien direct dans la bibliothèque locale, se déconnecter du compte ; pour une bibliothèque synchronisée, utiliser le parcours peer approuvé.
+Un lien historique à jeton seul, même vers `localhost`, ne suffit pas : le resolver Mines exige un `peerDeviceId` approuvé pour ouvrir ces connexions. Cette préversion ne propose pas de contournement par réseau local, VPN ou `adb reverse`. La bibliothèque locale et ses données ne sont pas importées automatiquement dans le compte.
+
+**Prérequis restant pour un essai de bout en bout :** un compte Mines accessible, un hôte connecté au même compte, l’approbation humaine de l’appareil et un réseau permettant la session peer. Aucune session de compte utilisateur ni approbation d’appareil n’a été créée pour les validations de cette livraison. Le contrôle d’un agent réel n’est donc pas certifié par les builds ou les essais de protocole isolés.
 
 Sous **Settings → Environments → hôte → Device access**, les sessions autorisées peuvent consulter les appareils et, si elles disposent du droit de gestion, vérifier les demandes, les autoriser, les refuser ou révoquer un accès. Les changements exigent une confirmation explicite. Certains hôtes CLI anciens ne publient pas les RPC de demandes : l’application l’indique et invite à gérer l’accès sur l’hôte.
 
@@ -72,6 +64,8 @@ Le script Android prépare la variante preview et son APK de test ; le script iO
 La configuration publique se trouve à la racine dans `.env` ou `.env.local`. Pour un service d’identité déjà exploité par vos soins, définir `MINES_CONTROL_URL` sur son origine HTTPS avant de reconstruire. `MINES_MOBILE_UPDATES_ENABLED=0` conserve les OTA désactivées. Aucun compte EAS, projet Expo distant, clé APNs/FCM ou service facturable n’est nécessaire pour compiler l’APK local prévu. Ne pas placer de secrets dans la configuration publique du bundle.
 
 ## Limites de cette préversion
+
+Le parcours central avec un hôte peer approuvé n’a pas encore été exécuté de bout en bout dans le client natif. Cette livraison ne doit pas être présentée comme une version professionnelle entièrement validée. Le [bilan de validation](docs/VALIDATION.md) distingue les contrôles réussis de ce prérequis restant.
 
 - Modèles, questions, approbations, interruptions et pièces jointes dépendent des capacités réellement annoncées par chaque hôte et fournisseur.
 - Les agents s’exécutent sur l’hôte. iOS/Android peuvent suspendre le client et ses connexions ; aucune exécution locale continue en arrière-plan n’est promise.
