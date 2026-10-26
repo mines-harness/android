@@ -6,7 +6,7 @@ import { useIsFocused, useRoute, type StaticScreenProps } from "@react-navigatio
 import type { EnvironmentId } from "@t3tools/contracts";
 import { readPairingInput } from "./pairing";
 import { useRef, useState } from "react";
-import { Linking, Pressable, StyleSheet, View } from "react-native";
+import { Linking, Platform, Pressable, StyleSheet, View } from "react-native";
 import Svg, { Defs, RadialGradient, Rect, Stop } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { cn } from "../../lib/cn";
@@ -98,7 +98,10 @@ export function ConnectionsNewRouteScreen(
   };
 
   return (
-    <SettingsScreen formSheet={routeName === "ConnectionsNew"} title="Pair a device">
+    <SettingsScreen
+      formSheet={Platform.OS === "ios" && routeName === "ConnectionsNew"}
+      title="Pair a device"
+    >
       <ScrollView
         nestedScrollEnabled
         contentInsetAdjustmentBehavior="automatic"
