@@ -1,20 +1,24 @@
 # Mines Mobile
 
-Client natif iOS et Android pour piloter des agents exécutés sur vos hôtes Mines. Cette première version est une **préversion technique privée pour essais**, issue du client React Native et des contrats utilisés par Mines desktop. Elle contient les parcours réels de connexion et de contrôle ; aucune donnée de démonstration n’est injectée dans l’application normale.
+**Source actuelle :** les nouvelles modifications communes vivent dans le [monorepo Mines](https://github.com/mines-harness/macos/tree/main/apps/mobile). Ces dépôts conservent la préversion mobile et ses reçus de validation ; comparer la [matrice des différences](https://github.com/mines-harness/macos/actions/workflows/mines-source-parity.yml) avant de reprendre un développement.
+
+<p align="center"><img src="https://raw.githubusercontent.com/mines-harness/macos/main/assets/mines/icon-256.png" width="80" height="80" alt="Mines" /></p>
+
+Client natif iOS et Android pour piloter des agents exécutés sur vos hôtes Mines. Cette première version est une **préversion technique pour essais**, issue du client React Native et des contrats utilisés par Mines desktop. Elle contient les parcours réels de connexion et de contrôle ; aucune donnée de démonstration n’est injectée dans l’application normale.
 
 **Validation disponible : builds Android Release et iOS ARM64 réussis, démarrage natif et tests isolés exécutés. Le parcours complet compte + peer approuvé + agent réel reste à valider.** La présence d’un écran ou d’un test unitaire ne certifie pas son fonctionnement sur appareil. Voir la [matrice de parité](docs/PARITY.md) et les [contraintes d’architecture](docs/ARCHITECTURE.md).
 
-Les dépôts privés [Android](https://github.com/mines-harness/android) et [iOS](https://github.com/mines-harness/ios) conservent le même client partagé. Le code dépend d’un hôte desktop ou CLI existant ; ce dépôt ne déploie pas de backend.
+Les dépôts [Android](https://github.com/mines-harness/android) et [iOS](https://github.com/mines-harness/ios) conservent le même client partagé. Le code dépend d’un hôte desktop ou CLI existant ; ce dépôt ne déploie pas de backend.
 
 ## Installer l’APK de test
 
-Release privée publiée : [v0.1.0-preview.1](https://github.com/mines-harness/android/releases/tag/v0.1.0-preview.1). L’APK distribué a été retéléchargé depuis GitHub : SHA-256 et signature Android Debug vérifiés. Voir le [reçu de livraison](docs/validation/android-release.json).
+Release preview publiée : [v0.1.0-preview.1](https://github.com/mines-harness/android/releases/tag/v0.1.0-preview.1). L’APK distribué a été retéléchargé depuis GitHub : SHA-256 et signature Android Debug vérifiés. Voir le [reçu de livraison](docs/validation/android-release.json).
 
 L’APK est **Mines Preview**, identifiant `app.mines.mobile.preview`, signé pour les essais. Il ne s’agit pas d’une signature de production. Il embarque son JavaScript ; son lancement autonome sans Metro ni Expo Go a été vérifié sur émulateur Android API 36. Aucun envoi vers Play Store ou App Store n’est prévu.
 
 Installation :
 
-1. Télécharger l’APK et le fichier de sommes SHA-256 depuis la même release privée, avec un compte GitHub autorisé.
+1. Télécharger l’APK et le fichier de sommes SHA-256 depuis la même release.
 2. Vérifier le checksum : `shasum -a 256 -c SHA256SUMS` depuis le dossier contenant les fichiers.
 3. Autoriser ponctuellement l’installation depuis la source de téléchargement dans Android, puis ouvrir l’APK. Avec un appareil de test déjà configuré pour ADB, `adb install -r chemin/vers/mines-preview.apk` convient également.
 4. Se connecter à son compte Mines, puis ouvrir **Settings → Environments → +** et suivre le parcours peer approuvé décrit ci-dessous.
@@ -34,6 +38,15 @@ Un lien historique à jeton seul, même vers `localhost`, ne suffit pas : le res
 **Prérequis restant pour un essai de bout en bout :** un compte Mines accessible, un hôte connecté au même compte, l’approbation humaine de l’appareil et un réseau permettant la session peer. Aucune session de compte utilisateur ni approbation d’appareil n’a été créée pour les validations de cette livraison. Le contrôle d’un agent réel n’est donc pas certifié par les builds ou les essais de protocole isolés.
 
 Sous **Settings → Environments → hôte → Device access**, les sessions autorisées peuvent consulter les appareils et, si elles disposent du droit de gestion, vérifier les demandes, les autoriser, les refuser ou révoquer un accès. Les changements exigent une confirmation explicite. Certains hôtes CLI anciens ne publient pas les RPC de demandes : l’application l’indique et invite à gérer l’accès sur l’hôte.
+
+## Aperçu du client natif
+
+Captures des builds preview sur émulateur et simulateur, sans compte ni hôte connecté. Elles illustrent l’interface ; elles ne certifient pas le parcours peer de bout en bout.
+
+<p align="center">
+  <img src="docs/screenshots/ios-library.png" width="250" alt="Bibliothèque Mines sur simulateur iOS, aucun hôte connecté" />
+  <img src="docs/screenshots/android-pairing.png" width="250" alt="Appairage Mines sur émulateur Android, sans compte connecté" />
+</p>
 
 ## Construire et vérifier
 
@@ -75,6 +88,6 @@ Le parcours central avec un hôte peer approuvé n’a pas encore été exécut�
 
 ## Provenance et licences
 
-Base inspectée : `mines-harness/macos` à `3de42d577a1e744b465c4893254a1ca5dbe0fb67`, issue de T3 Code. Le CLI privé à `82b09e98f5cf585cb45e0a2489159d78c39155da` et le dépôt public de distribution ont aussi été comparés pour vérifier les capacités des hôtes au-delà des seules commandes CLI.
+Base inspectée : `mines-harness/macos` à `3de42d577a1e744b465c4893254a1ca5dbe0fb67`, issue de T3 Code. Le snapshot CLI à `82b09e98f5cf585cb45e0a2489159d78c39155da` et le dépôt public de distribution ont aussi été comparés pour vérifier les capacités des hôtes au-delà des seules commandes CLI.
 
 La licence MIT d’origine et son attribution T3 Tools sont conservées dans [LICENSE](LICENSE). Les forks React Native, modules natifs et bibliothèques embarquées conservent leurs notices : [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Les noms `@t3tools/*` restent des identifiants de compatibilité ; ils ne signifient pas que T3 Tools distribue ou valide cette préversion.

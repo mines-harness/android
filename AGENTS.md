@@ -1,3 +1,7 @@
+# Canonical Mines source and releases
+
+Active shared development and all new desktop/CLI releases use https://github.com/mines-harness/macos. This repository retains an earlier platform or distribution snapshot. Before implementing "latest", compare canonical main, this checkout, the installed app commit, and the canonical source parity report. Preserve platform-specific behavior when integrating changes; do not overwrite histories or run a second release train from this snapshot. Follow https://github.com/mines-harness/macos/blob/main/docs/operations/mines-release.md for verified builds and identity-preserving installation.
+
 # Travailler sur Mines Mobile
 
 Ce dépôt privé contient les clients mobiles iOS/Android et leurs packages partagés. Les agents s’exécutent sur les hôtes desktop/CLI ; le téléphone les contrôle par le protocole existant. Présence d’un écran, réussite de tests isolés et validation sur appareil sont trois preuves distinctes.
